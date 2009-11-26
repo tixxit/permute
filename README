@@ -1,0 +1,39 @@
+A module that provides iterators for combinations and permutations of lists.
+
+The docstrings provide good documentation for use.
+
+Installation
+============
+
+Run: python setup.py install
+
+Example Use
+===========
+
+Solving the Travelling Salesman Problem:
+
+from permute import *
+
+def solve_tsp(weights):
+    nodes = list(reduce(lambda s, e: s.update(e) or s, weights.keys(), set()))
+    for i,j in combinations(nodes, 2):
+        if (i,j) not in weights and (j,i) not in weights:
+            weights[(i,j)] = -1
+    path, min = [], -1
+    for cand in permutations(nodes):
+        dist = 0
+        for e in ((cand[i-1], cand[i]) for i in xrange(1, len(nodes))):
+            d = e in weights and weights[e] or weights[(e[1], e[0])]
+            if d < 0:
+                dist = -1
+                break
+            else:
+                dist += d
+	if dist >= 0 and (min < 0 or dist < min):
+	    path, min = cand, dist
+    return path, min
+
+print(solve_tsp({(1,2): 1, (1,3): 2, (1,4): 3, (2,3): 3, (3,4):1}))
+
+Enjoy!
+- Tom
